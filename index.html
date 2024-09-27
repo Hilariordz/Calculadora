@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: hsla(246,32%,17%,1);
+            background-image: radial-gradient(circle at 0% 99%, hsla(276,100%,51%,1) 0%, transparent 67%), 
+                              radial-gradient(circle at 46% 94%, hsla(263,70%,26%,1) 0%, transparent 81%), 
+                              radial-gradient(circle at 93% 95%, hsla(266,100%,22%,1) 0%, transparent 66%), 
+                              radial-gradient(circle at 89% 8%, hsla(246,32%,17%,1) 0%, transparent 150%);
+            background-blend-mode: normal, normal, normal, normal;
+        }
+        .calculadora {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 294px;
+        }
+        .pantalla {
+            width: 91%;
+            height: 60px;
+            font-size: 2em;
+            padding: 10px;
+            text-align: right;
+            border: none;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .boton {
+            width: 60px;
+            height: 60px;
+            margin: 5px;
+            font-size: 2em;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            color: white;
+            background-color: #555;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+        .boton:active {
+            background-color: #777;
+        }
+        .boton-operador {
+            background-color: #77f312;
+        }
+        .boton-igual {
+            background-color: #943ce7;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculadora">
+        <input type="text" id="pantalla" class="pantalla" disabled />
+        <br>
+        <button class="boton" onclick="agregarNumero('7')">7</button>
+        <button class="boton" onclick="agregarNumero('8')">8</button>
+        <button class="boton" onclick="agregarNumero('9')">9</button>
+        <button class="boton boton-operador" onclick="agregarOperador('/')">/</button>
+        <br>
+        <button class="boton" onclick="agregarNumero('4')">4</button>
+        <button class="boton" onclick="agregarNumero('5')">5</button>
+        <button class="boton" onclick="agregarNumero('6')">6</button>
+        <button class="boton boton-operador" onclick="agregarOperador('*')">*</button>
+        <br>
+        <button class="boton" onclick="agregarNumero('1')">1</button>
+        <button class="boton" onclick="agregarNumero('2')">2</button>
+        <button class="boton" onclick="agregarNumero('3')">3</button>
+        <button class="boton boton-operador" onclick="agregarOperador('-')">-</button>
+        <br>
+        <button class="boton" onclick="agregarNumero('0')">0</button>
+        <button class="boton" onclick="limpiarPantalla()">C</button>
+        <button class="boton boton-igual" onclick="calcularResultado()">=</button>
+        <button class="boton boton-operador" onclick="agregarOperador('+')">+</button>
+    </div>
+
+    <script>
+        let operacion = "";
+
+        function agregarNumero(numero) {
+            operacion += numero;
+            document.getElementById('pantalla').value = operacion;
+        }
+
+        function agregarOperador(operador) {
+            operacion += " " + operador + " ";
+            document.getElementById('pantalla').value = operacion;
+        }
+
+        function limpiarPantalla() {
+            operacion = "";
+            document.getElementById('pantalla').value = "";
+        }
+
+        function calcularResultado() {
+            try {
+                operacion = eval(operacion);
+                document.getElementById('pantalla').value = operacion;
+            } catch (error) {
+                document.getElementById('pantalla').value = "Error";
+            }
+        }
+    </script>
+
+</body>
+</html>
