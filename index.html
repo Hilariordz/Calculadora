@@ -7,7 +7,7 @@
     <style>
         @font-face {
             font-family: "Jacquarda Bastarda 9";
-            src: url('JacquardaBastarda9.woff2') format('woff2'); /* Asegúrate de que la ruta sea correcta */
+            src: url('JacquardaBastarda9.woff2') format('woff2');
             font-weight: 400;
             font-style: normal;
         }
@@ -27,11 +27,12 @@
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             width: 294px;
+            border: 3px solid #77f312;
         }
-        .pantalla {
+        .pantalla-resultado {
             width: 91%;
             height: 60px;
-            font-size: 2em;
+            font-size: 1.5em;
             padding: 10px;
             text-align: right;
             border: none;
@@ -39,6 +40,7 @@
             border-radius: 5px;
             font-weight: bold;
             font-family: "Jacquarda Bastarda 9", serif;
+            white-space: pre-wrap; 
         }
         .boton {
             width: 60px;
@@ -63,13 +65,24 @@
         .boton-igual {
             background-color: #943ce7;
         }
+        
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
     </style>
 </head>
 <body>
 
     <div class="calculadora">
-        <label for="pantalla" class="visually-hidden">Resultado</label>
-        <input type="text" id="pantalla" class="pantalla" disabled />
+        <label for="pantalla-resultado" class="visually-hidden">Resultado</label>
+        <textarea id="pantalla-resultado" class="pantalla-resultado" rows="2" disabled></textarea>
         <br>
         <button class="boton" onclick="agregarNumero('7')">7</button>
         <button class="boton" onclick="agregarNumero('8')">8</button>
@@ -88,35 +101,52 @@
         <br>
         <button class="boton" onclick="agregarNumero('0')">0</button>
         <button class="boton" onclick="limpiarPantalla()">C</button>
+        <button class="boton" onclick="borrarUltimo()">←</button>
         <button class="boton boton-igual" onclick="calcularResultado()">=</button>
         <button class="boton boton-operador" onclick="agregarOperador('+')">+</button>
     </div>
 
     <script>
         let operacion = "";
+        let operacionRealizada = false; 
 
         function agregarNumero(numero) {
+            if (operacionRealizada) {
+                operacion = "";
+                operacionRealizada = false;
+            }
             operacion += numero;
-            document.getElementById('pantalla').value = operacion;
+            document.getElementById('pantalla-resultado').value = operacion;
         }
 
         function agregarOperador(operador) {
+            if (operacionRealizada) {
+                operacionRealizada = false;
+            }
             operacion += " " + operador + " ";
-            document.getElementById('pantalla').value = operacion;
+            document.getElementById('pantalla-resultado').value = operacion;
         }
 
         function limpiarPantalla() {
             operacion = "";
-            document.getElementById('pantalla').value = "";
+            document.getElementById('pantalla-resultado').value = "";
+        }
+
+        function borrarUltimo() {
+            if (operacion.length > 0) {
+                operacion = operacion.slice(0, -1);
+                document.getElementById('pantalla-resultado').value = operacion;
+            }
         }
 
         function calcularResultado() {
             try {
                 const resultado = Function('"use strict"; return (' + operacion + ')')();
-                document.getElementById('pantalla').value = resultado;
+                document.getElementById('pantalla-resultado').value = operacion + " =\n" + resultado;
                 operacion = String(resultado);
+                operacionRealizada = true; 
             } catch (error) {
-                document.getElementById('pantalla').value = "Error";
+                document.getElementById('pantalla-resultado').value = "Error";
                 operacion = "";
             }
         }
