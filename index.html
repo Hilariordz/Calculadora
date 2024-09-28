@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora</title>
     <style>
+        @font-face {
+            font-family: "Jacquarda Bastarda 9";
+            src: url('JacquardaBastarda9.woff2') format('woff2'); /* Asegúrate de que la ruta sea correcta */
+            font-weight: 400;
+            font-style: normal;
+        }
+
         body {
             font-family: Arial, sans-serif;
             display: flex;
@@ -13,11 +20,6 @@
             height: 100vh;
             margin: 0;
             background-color: hsla(246,32%,17%,1);
-            background-image: radial-gradient(circle at 0% 99%, hsla(276,100%,51%,1) 0%, transparent 67%), 
-                              radial-gradient(circle at 46% 94%, hsla(263,70%,26%,1) 0%, transparent 81%), 
-                              radial-gradient(circle at 93% 95%, hsla(266,100%,22%,1) 0%, transparent 66%), 
-                              radial-gradient(circle at 89% 8%, hsla(246,32%,17%,1) 0%, transparent 150%);
-            background-blend-mode: normal, normal, normal, normal;
         }
         .calculadora {
             background-color: #333;
@@ -36,6 +38,7 @@
             margin-bottom: 10px;
             border-radius: 5px;
             font-weight: bold;
+            font-family: "Jacquarda Bastarda 9", serif;
         }
         .boton {
             width: 60px;
@@ -47,11 +50,12 @@
             border: none;
             color: white;
             background-color: #555;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.1s;
             font-weight: bold;
         }
         .boton:active {
             background-color: #777;
+            transform: scale(0.95);
         }
         .boton-operador {
             background-color: #77f312;
@@ -64,6 +68,7 @@
 <body>
 
     <div class="calculadora">
+        <label for="pantalla" class="visually-hidden">Resultado</label>
         <input type="text" id="pantalla" class="pantalla" disabled />
         <br>
         <button class="boton" onclick="agregarNumero('7')">7</button>
@@ -107,10 +112,12 @@
 
         function calcularResultado() {
             try {
-                operacion = eval(operacion);
-                document.getElementById('pantalla').value = operacion;
+                const resultado = Function('"use strict"; return (' + operacion + ')')();
+                document.getElementById('pantalla').value = resultado;
+                operacion = String(resultado);
             } catch (error) {
                 document.getElementById('pantalla').value = "Error";
+                operacion = "";
             }
         }
     </script>
