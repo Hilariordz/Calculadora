@@ -5,13 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora</title>
     <style>
-        @font-face {
-            font-family: "Jacquarda Bastarda 9";
-            src: url('JacquardaBastarda9.woff2') format('woff2');
-            font-weight: 400;
-            font-style: normal;
-        }
-
         body {
             font-family: Arial, sans-serif;
             display: flex;
@@ -20,6 +13,11 @@
             height: 100vh;
             margin: 0;
             background-color: hsla(246,32%,17%,1);
+            background-image: radial-gradient(circle at 0% 99%, hsla(276,100%,51%,1) 0%, transparent 67%), 
+                            radial-gradient(circle at 46% 94%, hsla(263,70%,26%,1) 0%, transparent 81%), 
+                            radial-gradient(circle at 93% 95%, hsla(266,100%,22%,1) 0%, transparent 66%), 
+                            radial-gradient(circle at 89% 8%, hsla(246,32%,17%,1) 0%, transparent 150%);
+            background-blend-mode: normal, normal, normal, normal;
         }
         .calculadora {
             background-color: #333;
@@ -27,20 +25,36 @@
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             width: 294px;
-            border: 3px solid #77f312;
+            border: 3px solid #77f312; 
         }
-        .pantalla-resultado {
-            width: 91%;
-            height: 60px;
-            font-size: 1.5em;
-            padding: 10px;
-            text-align: right;
-            border: none;
+        .input-container {
+            display: flex;
+            background: white;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, #23272F 0%, #14161a 100%);
+            box-shadow: 10px 10px 20px #0e1013, -10px -10px 40px #383e4b;
+            padding: 0.3rem;
+            gap: 0.3rem;
             margin-bottom: 10px;
-            border-radius: 5px;
+        }
+        .pantalla {
+            border-radius: 0.8rem 0 0 0.8rem;
+            background: #23272F;
+            box-shadow: inset 5px 5px 10px #0e1013, inset -5px -5px 10px #383e4b;
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            color: white;
+            font-size: 2em;
             font-weight: bold;
-            font-family: "Jacquarda Bastarda 9", serif;
-            white-space: pre-wrap; 
+            transition: all 0.2s ease-in-out;
+        }
+        .pantalla:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 212, 59, 0.5);
+        }
+        .pantalla.resultado {
+            box-shadow: 0 0 10px rgba(255, 102, 0, 0.8), 0 0 20px rgba(255, 212, 59, 0.8);
         }
         .boton {
             width: 60px;
@@ -52,12 +66,11 @@
             border: none;
             color: white;
             background-color: #555;
-            transition: background-color 0.3s, transform 0.1s;
+            transition: background-color 0.3s;
             font-weight: bold;
         }
         .boton:active {
             background-color: #777;
-            transform: scale(0.95);
         }
         .boton-operador {
             background-color: #77f312;
@@ -65,24 +78,14 @@
         .boton-igual {
             background-color: #943ce7;
         }
-        
-        .visually-hidden {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            border: 0;
-        }
     </style>
 </head>
 <body>
 
     <div class="calculadora">
-        <label for="pantalla-resultado" class="visually-hidden">Resultado</label>
-        <textarea id="pantalla-resultado" class="pantalla-resultado" rows="2" disabled></textarea>
+        <div class="input-container">
+            <input type="text" id="pantalla" class="pantalla" disabled />
+        </div>
         <br>
         <button class="boton" onclick="agregarNumero('7')">7</button>
         <button class="boton" onclick="agregarNumero('8')">8</button>
@@ -101,22 +104,23 @@
         <br>
         <button class="boton" onclick="agregarNumero('0')">0</button>
         <button class="boton" onclick="limpiarPantalla()">C</button>
-        <button class="boton" onclick="borrarUltimo()">←</button>
+        <button class="boton" onclick="borrarUltimo()">←</button> <!-- Botón de retroceso añadido -->
         <button class="boton boton-igual" onclick="calcularResultado()">=</button>
         <button class="boton boton-operador" onclick="agregarOperador('+')">+</button>
     </div>
 
     <script>
         let operacion = "";
-        let operacionRealizada = false; 
+        let operacionRealizada = false; // Variable para saber si ya se realizó una operación
 
+        // Agregar un número a la operación
         function agregarNumero(numero) {
             if (operacionRealizada) {
                 operacion = "";
                 operacionRealizada = false;
             }
             operacion += numero;
-            document.getElementById('pantalla-resultado').value = operacion;
+            document.getElementById('pantalla').value = operacion;
         }
 
         function agregarOperador(operador) {
@@ -124,30 +128,33 @@
                 operacionRealizada = false;
             }
             operacion += " " + operador + " ";
-            document.getElementById('pantalla-resultado').value = operacion;
+            document.getElementById('pantalla').value = operacion;
         }
 
         function limpiarPantalla() {
             operacion = "";
-            document.getElementById('pantalla-resultado').value = "";
+            document.getElementById('pantalla').value = "";
+            document.getElementById('pantalla').classList.remove('resultado');
         }
 
         function borrarUltimo() {
             if (operacion.length > 0) {
                 operacion = operacion.slice(0, -1);
-                document.getElementById('pantalla-resultado').value = operacion;
+                document.getElementById('pantalla').value = operacion;
             }
         }
 
         function calcularResultado() {
             try {
-                const resultado = Function('"use strict"; return (' + operacion + ')')();
-                document.getElementById('pantalla-resultado').value = operacion + " =\n" + resultado;
+                const resultado = eval(operacion);
+                document.getElementById('pantalla').value = operacion + " = " + resultado;
                 operacion = String(resultado);
-                operacionRealizada = true; 
+                document.getElementById('pantalla').classList.add('resultado');
+                operacionRealizada = true;
             } catch (error) {
-                document.getElementById('pantalla-resultado').value = "Error";
-                operacion = "";
+                document.getElementById('pantalla').value = "Error";
+                operacion = ""; 
+                document.getElementById('pantalla').classList.remove('resultado');
             }
         }
     </script>
