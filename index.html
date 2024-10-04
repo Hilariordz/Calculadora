@@ -14,9 +14,9 @@
             margin: 0;
             background-color: hsla(246,32%,17%,1);
             background-image: radial-gradient(circle at 0% 99%, hsla(276,100%,51%,1) 0%, transparent 67%), 
-                              radial-gradient(circle at 46% 94%, hsla(263,70%,26%,1) 0%, transparent 81%), 
-                              radial-gradient(circle at 93% 95%, hsla(266,100%,22%,1) 0%, transparent 66%), 
-                              radial-gradient(circle at 89% 8%, hsla(246,32%,17%,1) 0%, transparent 150%);
+                            radial-gradient(circle at 46% 94%, hsla(263,70%,26%,1) 0%, transparent 81%), 
+                            radial-gradient(circle at 93% 95%, hsla(266,100%,22%,1) 0%, transparent 66%), 
+                            radial-gradient(circle at 89% 8%, hsla(246,32%,17%,1) 0%, transparent 150%);
             background-blend-mode: normal, normal, normal, normal;
         }
         .calculadora {
@@ -25,17 +25,36 @@
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             width: 294px;
+            border: 3px solid #77f312; 
+        }
+        .input-container {
+            display: flex;
+            background: white;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, #23272F 0%, #14161a 100%);
+            box-shadow: 10px 10px 20px #0e1013, -10px -10px 40px #383e4b;
+            padding: 0.3rem;
+            gap: 0.3rem;
+            margin-bottom: 10px;
         }
         .pantalla {
-            width: 91%;
-            height: 60px;
-            font-size: 2em;
-            padding: 10px;
-            text-align: right;
+            border-radius: 0.8rem 0 0 0.8rem;
+            background: #23272F;
+            box-shadow: inset 5px 5px 10px #0e1013, inset -5px -5px 10px #383e4b;
+            width: 100%;
+            padding: 1rem;
             border: none;
-            margin-bottom: 10px;
-            border-radius: 5px;
+            color: white;
+            font-size: 2em;
             font-weight: bold;
+            transition: all 0.2s ease-in-out;
+        }
+        .pantalla:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 212, 59, 0.5);
+        }
+        .pantalla.resultado {
+            box-shadow: 0 0 10px rgba(255, 102, 0, 0.8), 0 0 20px rgba(255, 212, 59, 0.8);
         }
         .boton {
             width: 60px;
@@ -49,6 +68,9 @@
             background-color: #555;
             transition: background-color 0.3s;
             font-weight: bold;
+        }
+        .boton:hover {
+            background-color: red;
         }
         .boton:active {
             background-color: #777;
@@ -67,7 +89,9 @@
 <body>
 
     <div class="calculadora">
-        <input type="text" id="pantalla" class="pantalla" disabled />
+        <div class="input-container">
+            <input type="text" id="pantalla" class="pantalla" disabled />
+        </div>
         <br>
         <button class="boton" onclick="agregarNumero('7')">7</button>
         <button class="boton" onclick="agregarNumero('8')">8</button>
@@ -85,20 +109,34 @@
         <button class="boton boton-operador" onclick="agregarOperador('-')">-</button>
         <br>
         <button class="boton" onclick="agregarNumero('0')">0</button>
+<<<<<<< HEAD
         <button class="boton boton-clear" onclick="limpiarPantalla()">C</button>
+=======
+        <button class="boton" onclick="limpiarPantalla()">C</button>
+        <button class="boton" onclick="borrarUltimo()">←</button> <!-- Botón de retroceso añadido -->
+>>>>>>> main
         <button class="boton boton-igual" onclick="calcularResultado()">=</button>
         <button class="boton boton-operador" onclick="agregarOperador('+')">+</button>
     </div>
 
     <script>
         let operacion = "";
+        let operacionRealizada = false; // Variable para saber si ya se realizó una operación
 
+        // Agregar un número a la operación
         function agregarNumero(numero) {
+            if (operacionRealizada) {
+                operacion = "";
+                operacionRealizada = false;
+            }
             operacion += numero;
             document.getElementById('pantalla').value = operacion;
         }
 
         function agregarOperador(operador) {
+            if (operacionRealizada) {
+                operacionRealizada = false;
+            }
             operacion += " " + operador + " ";
             document.getElementById('pantalla').value = operacion;
         }
@@ -106,14 +144,27 @@
         function limpiarPantalla() {
             operacion = "";
             document.getElementById('pantalla').value = "";
+            document.getElementById('pantalla').classList.remove('resultado');
+        }
+
+        function borrarUltimo() {
+            if (operacion.length > 0) {
+                operacion = operacion.slice(0, -1);
+                document.getElementById('pantalla').value = operacion;
+            }
         }
 
         function calcularResultado() {
             try {
-                operacion = eval(operacion);
-                document.getElementById('pantalla').value = operacion;
+                const resultado = eval(operacion);
+                document.getElementById('pantalla').value = operacion + " = " + resultado;
+                operacion = String(resultado);
+                document.getElementById('pantalla').classList.add('resultado');
+                operacionRealizada = true;
             } catch (error) {
-                document.getElementById('pantalla').value = "Error";
+                document.getElementById('pantalla').value = "¿Intentando romper la calculadora?";
+                operacion = ""; 
+                document.getElementById('pantalla').classList.remove('resultado');
             }
         }
     </script>
